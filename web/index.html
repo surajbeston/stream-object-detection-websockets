@@ -1,0 +1,36 @@
+<html>
+    <head>
+
+    </head>
+    <body>
+        <div style="display: flex; justify-content: space-around;">
+            <img style="height: 600px; width: 600px">
+            <div style="width: 200px">
+                <h2>FPS: <span id="fps"></span></h2>
+                <h2>Objects</h2>
+                <div id="labels">
+                </div>
+            </div>
+        </div>
+        <script>
+        
+            // when window is loaded create websocket to localhost:8000 and upon receiving data use each receive to create a image inteh broser
+
+            var socket = new WebSocket("ws://localhost:8000");
+            socket.onmessage = function(event) {
+                var data = JSON.parse(event.data)
+                var img= document.querySelector("img");
+                img.src = "data:image/png;base64," + data.image;
+                document.querySelector("#labels").innerHTML = "";
+                for (var label of data.labels){
+                    var labelDiv = document.createElement("div");
+                    // uppercase label
+                    labelDiv.innerHTML = `${label.toUpperCase()}`;
+                    document.querySelector("#labels").appendChild(labelDiv);
+                    document.querySelector("#labels").appendChild(document.createElement("br"));
+                }
+                document.querySelector("#fps").innerHTML = parseInt(data.fps)
+            };
+        </script>
+    </body>
+</html>
